@@ -118,3 +118,37 @@ def score_skills(candidate):
 
     return min(score / 5.0, 1.0)
 
+
+def score_behavioral(candidate):
+    """
+    Scores candidate availability and platform engagement.
+    """
+    sig = candidate['redrob_signals']
+    score = 0.0
+
+    if sig['open_to_work_flag']:
+        score += 0.2
+
+    try:
+        last_active = datetime.strptime(sig['last_active_date'], '%Y-%m-%d')
+        days_inactive = (datetime.now() - last_active).days
+        if days_inactive <= 30:
+            score += 0.2
+        elif days_inactive <= 90:
+            score += 0.1
+        elif days_inactive <= 180:
+            score += 0.05
+    except Exception:
+        pass
+
+    score += sig['recruiter_response_rate'] * 0.3
+
+    notice = sig['notice_period_days']
+    if notice <= 30:
+        score += 0.2
+    elif notice <= 60:
+        score += 0.1
+
+    score += sig['interview_completion_rate'] * 0.1
+
+    return max(0.0, min(1.0, score))
