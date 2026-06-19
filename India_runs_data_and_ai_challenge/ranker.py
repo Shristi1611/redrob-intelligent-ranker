@@ -152,3 +152,21 @@ def score_behavioral(candidate):
     score += sig['interview_completion_rate'] * 0.1
 
     return max(0.0, min(1.0, score))
+
+
+def score_experience(candidate):
+    """
+    Scores years of experience against the JD target band of 5-9 years.
+    """
+    years = candidate['profile']['years_of_experience']
+
+    if 5 <= years <= 9:
+        return 1.0
+    elif 4 <= years < 5:
+        return 0.7
+    elif 9 < years <= 11:
+        return 0.6
+    elif 11 < years <= 13:
+        return 0.3
+    else:
+        return 0.1
