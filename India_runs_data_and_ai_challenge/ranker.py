@@ -61,3 +61,34 @@ def is_honeypot(candidate):
         return True
 
     return False
+
+
+def score_career(candidate):
+    """
+    Scores fit based on job title and career description content.
+    """
+    score = 0.0
+    profile = candidate['profile']
+    career = candidate['career_history']
+
+    current_title = profile['current_title'].lower()
+
+    if any(t in current_title for t in STRONG_TITLES):
+        score += 0.4
+
+    if any(t in current_title for t in WEAK_TITLES):
+        score -= 0.3
+
+    career_text = ' '.join([j['description'].lower() for j in career])
+    keyword_hits = sum(1 for k in PRODUCTION_ML_KEYWORDS if k in career_text)
+    score += min(keyword_hits / 8.0, 0.4)
+
+    all_companies = [j['company'].lower() for j in career]
+    all_consulting = all(
+        any(firm in co for firm in CONSULTING_FIRMS)
+        for co in all_companies
+    )
+    if all_consulting:
+        score -= 0.2
+
+    return max(0.0, min(1.0, score))
