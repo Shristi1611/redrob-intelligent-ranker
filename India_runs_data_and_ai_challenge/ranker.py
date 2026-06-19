@@ -92,3 +92,29 @@ def score_career(candidate):
         score -= 0.2
 
     return max(0.0, min(1.0, score))
+
+
+def score_skills(candidate):
+    """
+    Scores relevant skill coverage weighted by proficiency level
+    and usage duration.
+    """
+    score = 0.0
+    skills = candidate['skills']
+
+    proficiency_weights = {
+        'beginner':     0.25,
+        'intermediate': 0.5,
+        'advanced':     0.75,
+        'expert':       1.0
+    }
+
+    for skill in skills:
+        name = skill['name'].lower()
+        if any(core in name for core in CORE_SKILLS):
+            prof_weight = proficiency_weights.get(skill['proficiency'], 0.5)
+            duration_bonus = min(skill.get('duration_months', 0) / 36, 1.0)
+            score += prof_weight * (0.7 + 0.3 * duration_bonus)
+
+    return min(score / 5.0, 1.0)
+
