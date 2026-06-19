@@ -170,3 +170,26 @@ def score_experience(candidate):
         return 0.3
     else:
         return 0.1
+
+
+def score_profile(candidate):
+    """
+    Scores profile completeness and verification signals.
+    """
+    sig = candidate['redrob_signals']
+    score = 0.0
+
+    if sig['verified_email']:
+        score += 0.2
+    if sig['verified_phone']:
+        score += 0.2
+    if sig['linkedin_connected']:
+        score += 0.1
+
+    score += (sig['profile_completeness_score'] / 100) * 0.3
+
+    gh = sig['github_activity_score']
+    if gh > 0:
+        score += (gh / 100) * 0.2
+
+    return min(score, 1.0)
