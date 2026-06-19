@@ -234,3 +234,49 @@ def generate_reasoning(candidate, scores):
         parts.append(f"active GitHub (score: {gh:.0f})")
 
     return '; '.join(parts) + '.'
+
+
+def rank_candidates(candidates):
+    """
+    Main ranking pipeline.
+    """
+    results = []
+
+    for c in candidates:
+        if is_honeypot(c):
+            continue
+
+        scores = {
+            'career':     score_career(c),
+            'skills':     score_skills(c),
+            'behavioral': score_behavioral(c),
+            'experience': score_experience(c),
+            'profile':    score_profile(c),
+        }
+
+        final = sum(WEIGHTS[k] * scores[k] for k in WEIGHTS)
+
+        results.append({
+            'candidate_id': c['candidate_id'],
+            'score':        round(final, 4),
+            'scores':       scores,
+            'reasoning':    generate_reasoning(c, scores)
+        })
+
+    results.sort(key=lambda x: x['score'], reverse=True)
+
+    for i, r in enumerate(results):
+        r['rank'] = i + 1
+
+    return results
+
+
+if __name__ == '__main__':
+    with open('sample_candidates.json') as f:
+        candidates = json.load(f)
+
+    ranked = rank_candidates(candidates)
+
+    print(f"Ranked {len(ranked)} candidates\n")
+    for r in ranked[:15]:
+        print(f"[{r['rank']}] {r['candidate_id']}: score={r['score']}")
