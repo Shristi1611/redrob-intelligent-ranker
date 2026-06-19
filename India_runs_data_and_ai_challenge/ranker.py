@@ -3,7 +3,7 @@ import math
 from datetime import datetime, date
 
 # Scoring weights derived from JD analysis.
-# Career history is the strongest signal: skills lists are unreliable
+# Career history is the strongest signal — skills lists are unreliable
 # as candidates frequently list aspirational rather than demonstrated skills.
 WEIGHTS = {
     'career':     0.40,
@@ -48,3 +48,16 @@ WEAK_TITLES = [
 ]
 
 
+def is_honeypot(candidate):
+    """
+    Identifies synthetic trap profiles embedded in the dataset.
+    """
+    for skill in candidate['skills']:
+        if skill['proficiency'] == 'expert' and skill.get('duration_months', 1) == 0:
+            return True
+
+    years = candidate['profile']['years_of_experience']
+    if years < 0 or years > 50:
+        return True
+
+    return False
