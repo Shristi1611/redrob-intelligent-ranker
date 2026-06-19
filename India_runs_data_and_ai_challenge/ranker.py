@@ -193,3 +193,44 @@ def score_profile(candidate):
         score += (gh / 100) * 0.2
 
     return min(score, 1.0)
+
+
+def generate_reasoning(candidate, scores):
+    """
+    Produces a specific, fact-grounded reasoning string for each ranked candidate.
+    """
+    p = candidate['profile']
+    sig = candidate['redrob_signals']
+
+    title = p['current_title']
+    years = p['years_of_experience']
+    company = p['current_company']
+    resp = sig['recruiter_response_rate']
+    notice = sig['notice_period_days']
+    gh = sig['github_activity_score']
+
+    parts = []
+    parts.append(f"{title} with {years}yr at {company}")
+
+    top_skills = [
+        s['name'] for s in candidate['skills']
+        if any(c in s['name'].lower() for c in CORE_SKILLS)
+    ][:3]
+
+    if top_skills:
+        parts.append(f"relevant skills: {', '.join(top_skills)}")
+
+    if resp >= 0.7:
+        parts.append(f"strong engagement ({resp:.0%} response rate)")
+    elif resp < 0.3:
+        parts.append(f"low response rate ({resp:.0%}) is a concern")
+
+    if notice <= 30:
+        parts.append(f"available immediately (notice: {notice}d)")
+    elif notice > 90:
+        parts.append(f"long notice period ({notice}d) reduces fit")
+
+    if gh > 50:
+        parts.append(f"active GitHub (score: {gh:.0f})")
+
+    return '; '.join(parts) + '.'
