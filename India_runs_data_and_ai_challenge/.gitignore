@@ -1,0 +1,8 @@
+candidates.jsonl
+candidates.jsonl.gz
+submission.csv
+__pycache__/
+*.pyc
+test.py
+investigate.py
+crosscheck.py
