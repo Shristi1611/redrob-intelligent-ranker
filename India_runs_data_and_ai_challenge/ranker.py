@@ -435,23 +435,7 @@ if __name__ == '__main__':
     print(f"    No network calls made during ranking: TRUE (pure stdlib only)")
     print(f"    No GPU used: TRUE (no torch/tensorflow/cuda in this script)")
 
-    print("\n" + "="*60)
     print("ALL CHECKS COMPLETE")
-    print("="*60)
+    
 
-    print("\n--- DEBUG: Check CAND_0052682's scores ---")
-for c in candidates:
-    if c['candidate_id'] == 'CAND_0052682':
-        career_score = score_career(c)
-        raw_skills = score_skills(c)
-        print(f"Title: {c['profile']['current_title']}")
-        print(f"Company: {c['profile']['current_company']}")
-        print(f"Career score: {career_score}")
-        print(f"Raw skills: {raw_skills}")
-        break
-
-print("\n--- PRODUCTION_ML_KEYWORDS CURRENT LIST ---")
-print(PRODUCTION_ML_KEYWORDS)
-
-print("\n--- CONSULTING_FIRMS CURRENT LIST ---")
-print(CONSULTING_FIRMS)
+    
