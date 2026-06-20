@@ -15,7 +15,7 @@ WEIGHTS = {
 
 CONSULTING_FIRMS = [
     'tcs', 'infosys', 'wipro', 'accenture', 'cognizant',
-    'mindtree', 'capgemini', 'hcl', 'mphasis'
+    'mindtree', 'capgemini', 'hcl', 'mphasis', 'tech mahindra'
 ]
 
 CORE_SKILLS = [
