@@ -6,3 +6,4 @@ __pycache__/
 test.py
 investigate.py
 crosscheck.py
+.DS_Store
