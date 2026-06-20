@@ -83,16 +83,15 @@ def score_career(candidate):
     keyword_hits = sum(1 for k in PRODUCTION_ML_KEYWORDS if k in career_text)
     score += min(keyword_hits / 8.0, 0.4)
 
-    all_companies = [j['company'].lower() for j in career]
-    all_consulting = all(
-        any(firm in co for firm in CONSULTING_FIRMS)
-        for co in all_companies
-    )
-    if all_consulting:
-        score -= 0.2
+    # Penalize based on CURRENT employer, not full career history.
+    # The original check only fired if every past job was at a consulting
+    # firm, which missed candidates currently at one with a mixed history.
+    current_company = profile['current_company'].lower()
+    currently_at_consulting = any(firm in current_company for firm in CONSULTING_FIRMS)
+    if currently_at_consulting:
+        score -= 0.4
 
     return max(0.0, min(1.0, score))
-
 
 def score_skills(candidate):
     """
