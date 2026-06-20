@@ -15,7 +15,8 @@ WEIGHTS = {
 
 CONSULTING_FIRMS = [
     'tcs', 'infosys', 'wipro', 'accenture', 'cognizant',
-    'mindtree', 'capgemini', 'hcl', 'mphasis', 'tech mahindra'
+    'mindtree', 'capgemini', 'hcl', 'mphasis', 'tech mahindra',
+    'ibm', 'l&t infotech', 'ltimindtree'
 ]
 
 CORE_SKILLS = [
@@ -27,10 +28,10 @@ CORE_SKILLS = [
 ]
 
 PRODUCTION_ML_KEYWORDS = [
-    'deployed', 'production', 'retrieval', 'embedding', 'vector',
-    'ranking', 'recommendation', 'search', 'nlp', 'llm', 'built',
-    'shipped', 'scaled', 'latency', 'inference', 'fine-tun',
-    'rerank', 'semantic', 'index', 'pipeline'
+    'deployed', 'retrieval', 'embedding', 'vector database',
+    'ranking model', 'recommendation', 'semantic search', 'nlp',
+    'llm', 'fine-tun', 'rerank', 'semantic similarity',
+    'inference latency', 'model serving'
 ]
 
 STRONG_TITLES = [
@@ -437,3 +438,20 @@ if __name__ == '__main__':
     print("\n" + "="*60)
     print("ALL CHECKS COMPLETE")
     print("="*60)
+
+    print("\n--- DEBUG: Check CAND_0052682's scores ---")
+for c in candidates:
+    if c['candidate_id'] == 'CAND_0052682':
+        career_score = score_career(c)
+        raw_skills = score_skills(c)
+        print(f"Title: {c['profile']['current_title']}")
+        print(f"Company: {c['profile']['current_company']}")
+        print(f"Career score: {career_score}")
+        print(f"Raw skills: {raw_skills}")
+        break
+
+print("\n--- PRODUCTION_ML_KEYWORDS CURRENT LIST ---")
+print(PRODUCTION_ML_KEYWORDS)
+
+print("\n--- CONSULTING_FIRMS CURRENT LIST ---")
+print(CONSULTING_FIRMS)
