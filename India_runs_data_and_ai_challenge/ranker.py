@@ -211,6 +211,9 @@ def generate_reasoning(candidate, scores):
     parts = []
     parts.append(f"{title} with {years}yr at {company}")
 
+    if scores['career'] < 0.15:
+        parts.append("career history shows limited evidence of production ML/AI work relevant to this role")
+
     top_skills = [
         s['name'] for s in candidate['skills']
         if any(c in s['name'].lower() for c in CORE_SKILLS)
@@ -237,7 +240,9 @@ def generate_reasoning(candidate, scores):
 
 def rank_candidates(candidates):
     """
-    Main ranking pipeline.
+    Main ranking pipeline. Scores each candidate across five dimensions,
+    applies weighted aggregation, filters honeypots, and returns
+    a sorted list with ranks assigned.
     """
     results = []
 
@@ -245,15 +250,35 @@ def rank_candidates(candidates):
         if is_honeypot(c):
             continue
 
+        career_score = score_career(c)
+
+        # Discount skills score if career history shows no production ML work.
+        # This penalises keyword stuffing — skills listed without demonstrated use.
+        # A career_score of exactly 0 gets a near-total discount, since at that
+        # point the listed skills have no supporting evidence at all.
+        raw_skills = score_skills(c)
+        if career_score == 0:
+            career_multiplier = 0.05
+        else:
+            career_multiplier = 0.3 + 0.7 * career_score
+        discounted_skills = raw_skills * career_multiplier
+
         scores = {
-            'career':     score_career(c),
-            'skills':     score_skills(c),
+            'career':     career_score,
+            'skills':     discounted_skills,
             'behavioral': score_behavioral(c),
             'experience': score_experience(c),
             'profile':    score_profile(c),
         }
 
-        final = sum(WEIGHTS[k] * scores[k] for k in WEIGHTS)
+        weighted_sum = sum(WEIGHTS[k] * scores[k] for k in WEIGHTS)
+
+        # Career relevance also gates the FINAL score. A candidate with
+        # near-zero career fit should not be competitive even with strong
+        # behavioral signals, since behavioral/profile scores alone don't
+        # indicate role fit.
+        career_gate = 0.2 + 0.8 * career_score
+        final = weighted_sum * career_gate
 
         results.append({
             'candidate_id': c['candidate_id'],
@@ -268,7 +293,6 @@ def rank_candidates(candidates):
         r['rank'] = i + 1
 
     return results
-
 
 def load_candidates_jsonl(filepath):
     """
