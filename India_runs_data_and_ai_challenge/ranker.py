@@ -271,12 +271,63 @@ def rank_candidates(candidates):
     return results
 
 
+def load_candidates_jsonl(filepath):
+    """
+    Loads the full candidate pool from JSONL format —
+    one JSON object per line, as specified in the README.
+    """
+    candidates = []
+    with open(filepath, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                candidates.append(json.loads(line))
+    return candidates
+
+
+def write_submission_csv(ranked_results, filepath, top_n=100):
+    """
+    Writes the final submission CSV per submission_spec.docx Section 2.
+    Only the top N candidates are included, each rank used exactly once.
+    """
+    import csv
+
+    top_results = ranked_results[:top_n]
+
+    with open(filepath, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(['candidate_id', 'rank', 'score', 'reasoning'])
+        for r in top_results:
+            writer.writerow([
+                r['candidate_id'],
+                r['rank'],
+                f"{r['score']:.4f}",
+                r['reasoning']
+            ])
+
+    print(f"Wrote top {len(top_results)} candidates to {filepath}")
+
+
 if __name__ == '__main__':
-    with open('sample_candidates.json') as f:
-        candidates = json.load(f)
+    import time
 
+    start = time.time()
+
+    print("Loading full candidate pool...")
+    candidates = load_candidates_jsonl('candidates.jsonl')
+    load_time = time.time() - start
+    print(f"Loaded {len(candidates)} candidates in {load_time:.2f}s")
+
+    rank_start = time.time()
     ranked = rank_candidates(candidates)
+    rank_time = time.time() - rank_start
+    print(f"Ranked all candidates in {rank_time:.2f}s")
 
-    print(f"Ranked {len(ranked)} candidates\n")
+    total_time = time.time() - start
+    print(f"Total runtime: {total_time:.2f}s\n")
+
+    print("--- TOP 15 ---")
     for r in ranked[:15]:
         print(f"[{r['rank']}] {r['candidate_id']}: score={r['score']}")
+
+    write_submission_csv(ranked, 'submission.csv', top_n=100)
