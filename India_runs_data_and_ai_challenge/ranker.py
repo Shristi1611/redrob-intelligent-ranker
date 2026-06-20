@@ -51,6 +51,9 @@ WEAK_TITLES = [
 def is_honeypot(candidate):
     """
     Identifies synthetic trap profiles embedded in the dataset.
+    Honeypots contain logically impossible attribute combinations
+    and are assigned relevance tier 0 in the ground truth.
+    Submissions ranking >10% honeypots in top-100 are disqualified.
     """
     for skill in candidate['skills']:
         if skill['proficiency'] == 'expert' and skill.get('duration_months', 1) == 0:
@@ -59,6 +62,20 @@ def is_honeypot(candidate):
     years = candidate['profile']['years_of_experience']
     if years < 0 or years > 50:
         return True
+
+    # Cross-validate stated years_of_experience against summed career_history
+    # duration. Found via manual inspection of suspicious top-ranked candidates
+    # (e.g. profile stating 16.2yrs while career_history sums to ~8.2yrs, with
+    # the profile summary itself matching the LOWER, correct figure). A profile
+    # whose stated experience diverges significantly from its own career
+    # history, in either direction, indicates a data-consistency trap rather
+    # than a genuine candidate.
+    total_months = sum(j.get('duration_months', 0) for j in candidate['career_history'])
+    implied_years = total_months / 12
+    if implied_years > 0:
+        ratio = years / implied_years
+        if ratio > 1.6 or ratio < 0.6:
+            return True
 
     return False
 
