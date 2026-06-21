@@ -6,22 +6,14 @@ from shared_ui import inject_global_styles, render_sidebar_footer
 inject_global_styles()
 render_sidebar_footer()
 
-st.markdown(
-    '<div style="display:none; background:#1A1814; color:#F2F0E8; padding:10px 16px; '
-    'border-radius:8px; font-size:13px; margin-bottom:16px;" '
-    'class="mobile-sidebar-hint">'
-    'On mobile, tap the arrow in the top-left corner to open the menu and load candidates.'
-    '</div>'
-    '<style>'
-    '@media (max-width: 768px) { .mobile-sidebar-hint { display: block !important; } }'
-    '</style>',
-    unsafe_allow_html=True,
-)
-
 hero_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hero_component.html")
 with open(hero_path, "r", encoding="utf-8") as f:
     hero_html = f.read()
-components.html(hero_html, height=320, scrolling=False)
+
+# Fixed iframe heights don't auto-adjust to content. Sized generously here
+# with scrolling enabled as a safety net so nothing gets clipped regardless
+# of screen width or font rendering differences across browsers.
+components.html(hero_html, height=560, scrolling=True)
 
 st.write("")
 st.write("")
