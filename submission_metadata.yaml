@@ -1,0 +1,85 @@
+# Redrob Hackathon — Submission Metadata
+
+# ============================================================================
+# Team identity
+# ============================================================================
+team_name: "Shristi Sinha"
+
+primary_contact:
+  name: "Shristi Sinha"
+  email: "shristisinha1611@gmail.com"
+  phone: "+91-6299563619"
+
+team_members:
+  - name: "Shristi Sinha"
+    email: "shristisinha1611@gmail.com"
+    role: "Solo Participant"
+
+# ============================================================================
+# Code and reproducibility
+# ============================================================================
+github_repo: "https://github.com/Shristi1611/redrob-intelligent-ranker"
+
+sandbox_link: "https://redrob-intelligent-ranker.streamlit.app/"
+
+reproduce_command: "python ranker.py"
+
+# ============================================================================
+# Compute environment
+# ============================================================================
+compute:
+  platform: "HP 245 14 inch G9 Notebook PC"
+  cpu_cores: 6
+  ram_gb: 8
+  python_version: "3.12.3"
+  os: "Windows 11 Home Single Language, Build 26200"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: false
+  pre_computation_time_minutes: 0
+
+# ============================================================================
+# AI tools declaration
+# ============================================================================
+ai_tools_used:
+  - "Claude"
+
+ai_usage_summary: |
+  Used Claude throughout development of both ranker.py and the Streamlit
+  sandbox frontend. For the core ranker, Claude assisted with debugging
+  specific issues found through manual data inspection (the consulting-firm
+  penalty not firing correctly, the honeypot detection missing experience-
+  inconsistent profiles) and with calibrating scoring weights after reviewing
+  ranking output against the candidate dataset. The overall scoring design,
+  the decision to weight career history above skills, the honeypot pattern,
+  and the specific candidates investigated to find these issues, came from
+  manual review of the data. For the sandbox, Claude handled page layout,
+  styling, the animated hero component, and multipage navigation structure.
+  No candidate data was sent to any external API during ranking; the final
+  ranker runs entirely offline on pure Python standard library with no
+  external models or network calls.
+
+# ============================================================================
+# Approach summary
+# ============================================================================
+methodology_summary: |
+  Career-history-first ranker with five weighted components: career match
+  (40%), skills (25%), behavioral availability (20%), experience range (10%),
+  and profile quality (5%). Skills are discounted heavily when career history
+  shows no corresponding work experience, preventing keyword-stuffed profiles
+  from outranking genuinely relevant candidates. Career relevance also gates
+  the final score. Honeypot detection cross-validates stated years of
+  experience against summed career history duration, catching synthetic
+  profiles with internally inconsistent data. Pure Python standard library,
+  no external models or network calls. Runtime is approximately 35 seconds
+  for 100,000 candidates on CPU.
+
+# ============================================================================
+# Declarations
+# ============================================================================
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true
