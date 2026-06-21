@@ -1,0 +1,130 @@
+<div id="hero-root">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    #hero-root {
+      font-family: 'Sora', sans-serif;
+      background: linear-gradient(155deg, #DAD4C6 0%, #C9C2B1 100%);
+      padding: 56px 48px;
+      box-sizing: border-box;
+    }
+    #hero-root * { box-sizing: border-box; }
+
+    .intro-label {
+      pointer-events: none;
+      user-select: none;
+      font-size: clamp(15px, 2.4vw, 18px);
+      line-height: 1.4;
+      font-weight: 400;
+      color: rgba(20,18,14,0.45);
+      filter: blur(2.5px);
+      margin-bottom: 18px;
+      opacity: 0;
+      animation: riseIn 0.5s ease-out 0.1s forwards;
+    }
+
+    .title {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #1A1814;
+      margin: 0 0 18px 0;
+      line-height: 1.1;
+      opacity: 0;
+      animation: riseIn 0.55s ease-out 0.25s forwards;
+    }
+
+    .typewriter-line {
+      font-size: 16px;
+      color: #3D372D;
+      max-width: 540px;
+      line-height: 1.6;
+      min-height: 52px;
+      font-weight: 400;
+    }
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.05em;
+      background: #1A1814;
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: blink 0.9s step-end infinite;
+    }
+    .cursor.done { display: none; }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.03em;
+      color: #3D372D;
+      border: 1px solid rgba(20,18,14,0.25);
+      border-radius: 4px;
+      padding: 5px 10px;
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .tag.show {
+      animation: tagIn 0.4s ease-out forwards;
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes tagIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+
+  <div class="intro-label">Hey there, this is the Redrob ranking engine,<br/>built for the Intelligent Candidate Discovery challenge.</div>
+  <div class="title">Redrob Intelligent Ranker</div>
+  <p class="typewriter-line" id="typeTarget"><span id="typeText"></span><span class="cursor" id="cursor"></span></p>
+
+  <div class="tag-row" id="tagRow">
+    <div class="tag">Career history weighted first</div>
+    <div class="tag">Skills validated against work experience</div>
+    <div class="tag">Honeypot detection</div>
+    <div class="tag">No external models</div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const fullText = "Loads a candidate pool, scores each profile against the role using career history, demonstrated skills, and platform activity, then returns a ranked shortlist with reasoning for each placement.";
+    const el = document.getElementById('typeText');
+    const cursor = document.getElementById('cursor');
+    const speed = 16;
+    const startDelay = 750;
+    let i = 0;
+
+    function type() {
+      if (i < fullText.length) {
+        el.textContent += fullText.charAt(i);
+        i++;
+        setTimeout(type, speed);
+      } else {
+        cursor.classList.add('done');
+      }
+    }
+    setTimeout(type, startDelay);
+
+    const tags = document.querySelectorAll('.tag');
+    tags.forEach(function(tag, idx) {
+      setTimeout(function() {
+        tag.classList.add('show');
+      }, 420 + idx * 90);
+    });
+  })();
+</script>

@@ -1,0 +1,139 @@
+<div id="results-root">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    #results-root {
+      font-family: 'Sora', sans-serif;
+      background: #EFEBE2;
+      padding: 4px 0 8px 0;
+      box-sizing: border-box;
+    }
+    #results-root * { box-sizing: border-box; }
+
+    .rr-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(20,18,14,0.1);
+      border: 1px solid rgba(20,18,14,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .rr-card {
+      background: #FFFFFF;
+      padding: 24px 18px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: background 0.25s ease;
+    }
+    .rr-card.in { animation: rrCardIn 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .rr-card:hover { background: #FAF8F3; }
+    .rr-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
+      font-weight: 600;
+      color: #1A1814;
+    }
+    .rr-label {
+      font-size: 10.5px;
+      letter-spacing: 0.05em;
+      color: rgba(20,18,14,0.45);
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+
+    .rr-scorewrap {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: rgba(20,18,14,0.1);
+      border: 1px solid rgba(20,18,14,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .rr-score {
+      background: #FFFFFF;
+      padding: 16px 8px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: background 0.25s ease;
+    }
+    .rr-score.in { animation: rrCardIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .rr-score:hover { background: #FAF8F3; }
+    .rr-bartrack {
+      width: 100%; height: 3px;
+      background: rgba(20,18,14,0.1);
+      border-radius: 3px;
+      margin: 9px 0 10px 0;
+      overflow: hidden;
+    }
+    .rr-barfill {
+      height: 100%;
+      background: #1A1814;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .rr-scoreval {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1A1814;
+    }
+    .rr-scorelabel {
+      font-size: 9px;
+      color: rgba(20,18,14,0.45);
+      margin-top: 4px;
+      letter-spacing: 0.04em;
+      line-height: 1.5;
+      text-transform: uppercase;
+    }
+
+    @keyframes rrCardIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <div class="rr-grid" id="metricGrid"></div>
+  <div class="rr-scorewrap" id="scoreGrid" style="margin-top:4px; display:none;"></div>
+</div>
+
+<script>
+  (function() {
+    const DATA = __DATA_PLACEHOLDER__;
+
+    const metricGrid = document.getElementById('metricGrid');
+    if (DATA.metrics && DATA.metrics.length > 0) {
+      DATA.metrics.forEach(function(m, idx) {
+        const card = document.createElement('div');
+        card.className = 'rr-card';
+        card.innerHTML = '<div class="rr-value">' + m.value + '</div><div class="rr-label">' + m.label + '</div>';
+        metricGrid.appendChild(card);
+        setTimeout(function() { card.classList.add('in'); }, 80 + idx * 100);
+      });
+    } else {
+      metricGrid.style.display = 'none';
+    }
+
+    if (DATA.scores && DATA.scores.length > 0) {
+      const scoreGrid = document.getElementById('scoreGrid');
+      scoreGrid.style.display = 'grid';
+      DATA.scores.forEach(function(s, idx) {
+        const pill = document.createElement('div');
+        pill.className = 'rr-score';
+        pill.innerHTML =
+          '<div class="rr-scoreval">' + s.val.toFixed(2) + '</div>' +
+          '<div class="rr-bartrack"><div class="rr-barfill" id="bar' + idx + '"></div></div>' +
+          '<div class="rr-scorelabel">' + s.name + '<br/>' + s.weight + '</div>';
+        scoreGrid.appendChild(pill);
+        setTimeout(function() {
+          pill.classList.add('in');
+          document.getElementById('bar' + idx).style.width = Math.max(0, Math.min(100, s.val * 100)) + '%';
+        }, 300 + idx * 90);
+      });
+    }
+  })();
+</script>
