@@ -9,7 +9,20 @@ def inject_global_styles():
     * { font-family: 'Sora', sans-serif; }
 
     .stApp { background: #EFEBE2; }
-    #MainMenu, footer, header { visibility: hidden; }
+    #MainMenu, footer { visibility: hidden; }
+    header[data-testid="stHeader"] {
+        background: transparent;
+    }
+    header[data-testid="stHeader"] button {
+        background: #1A1814 !important;
+        border-radius: 8px !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    header[data-testid="stHeader"] button svg {
+        color: #F2F0E8 !important;
+        fill: #F2F0E8 !important;
+    }
     .block-container { padding-top: 2.5rem; max-width: 880px; }
 
     section[data-testid="stSidebar"] {
