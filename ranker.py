@@ -371,7 +371,7 @@ if __name__ == '__main__':
     for r in ranked[:15]:
         print(f"[{r['rank']}] {r['candidate_id']}: score={r['score']}")
 
-    write_submission_csv(ranked, 'submission.csv', top_n=100)
+    write_submission_csv(ranked, 'gatekeeper_protocol.csv', top_n=100)
 
     # SUBMISSION VERIFICATION
     
